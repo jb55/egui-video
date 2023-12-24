@@ -1,15 +1,18 @@
 use eframe::NativeOptions;
 use egui::{CentralPanel, DragValue, Grid, Sense, Slider, TextEdit, Window};
 use egui_video::{AudioDevice, Player};
+use log::info;
+
 fn main() {
-    let _ = eframe::run_native(
+    env_logger::init();
+    eframe::run_native(
         "app",
         NativeOptions::default(),
         Box::new(|_| Ok(Box::new(App::default()))),
     );
 }
 struct App {
-    audio_device: AudioDevice,
+    audio_device: Option<AudioDevice>,
     player: Option<Player>,
 
     media_path: String,
@@ -20,7 +23,7 @@ struct App {
 impl Default for App {
     fn default() -> Self {
         Self {
-            audio_device: AudioDevice::new().unwrap(),
+            audio_device: AudioDevice::new().ok(),
             media_path: String::new(),
             stream_size_scale: 1.,
             seek_frac: 0.,
@@ -36,10 +39,7 @@ impl eframe::App for App {
             ui.horizontal(|ui| {
                 ui.add_enabled_ui(!self.media_path.is_empty(), |ui| {
                     if ui.button("load").clicked() {
-                        match Player::new(ctx, &self.media_path.replace("\"", "")).and_then(|p| {
-                            p.with_audio(&mut self.audio_device)
-                                .and_then(|p| p.with_subtitles())
-                        }) {
+                        match Player::new(ctx, &self.media_path.replace("\"", "")) {
                             Ok(player) => {
                                 self.player = Some(player);
                             }
