@@ -1,6 +1,6 @@
 { pkgs ? import <nixpkgs> {} }:
 with pkgs;
-let x11libs = lib.makeLibraryPath [ alsa-lib atkmm xorg.libX11 xorg.libXcursor xorg.libXrandr xorg.libXi libglvnd vulkan-loader vulkan-validation-layers SDL2 ];
+let x11libs = lib.makeLibraryPath [ alsa-lib atkmm xorg.libX11 xorg.libXcursor libxkbcommon xorg.libXrandr xorg.libXi libglvnd vulkan-loader vulkan-validation-layers SDL2 ];
 in
 mkShell {
   nativeBuildInputs = [ gdb cargo rustc rustfmt libiconv pkg-config wrapGAppsHook ];
